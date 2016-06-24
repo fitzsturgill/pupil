@@ -1,5 +1,5 @@
 function exportPupil
-
+    % export pupilometry data to .mat files
     global state
     
     
