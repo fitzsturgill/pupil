@@ -8,11 +8,14 @@ function pupProcessFrame(frame)
     success = 0;
     connectivity = 8;  % default connectivity for identifiying connected components
     closeDiameter = 8;
-%     try    
-        rawFrame = state.pupil.vidData(:,:,frame);
-        state.pupil.rawFrameData = rawFrame;
+
+    rawFrame = state.pupil.vidData(:,:,frame);
+    state.pupil.rawFrameData = rawFrame;
         %%
+    
         % apply eyelid threshold
+    success = 1;
+    try
         eyeMaskRaw = rawFrame < state.pupil.lidThresh;
         se = strel('disk',closeDiameter); % morphologically close
         eyeMaskRaw = imclose(eyeMaskRaw, se);
@@ -47,12 +50,26 @@ function pupProcessFrame(frame)
         state.pupil.eye.majorAxisLength = stats.MajorAxisLength;        
         state.pupil.eye.centroid = stats.Centroid;
         
-%         subplot(2,2,3); imshow(eyeMaskFrame, [0 255]);
-%         subplot(2,2,2); imshow(eyeMaskComp);
-%%
+    catch
+        success = 0;
+        state.pupil.eye.mask = NaN;
+        state.pupil.eye.frame = NaN;
+        state.pupil.eye.area = NaN;
+        state.pupil.eye.box = zeros(1,4);
+        state.pupil.eye.avg = NaN;
+        state.pupil.eye.minorAxisLength = NaN;
+        state.pupil.eye.majorAxisLength = NaN;        
+        state.pupil.eye.centroid = NaN(1,2);     
+    end
 
         
-        % find pupil...
+    % if eye found, then find pupil
+  
+    try
+        % throw error if eye wasn't found
+        if ~success
+            error('Error in pupProcesFrame: Eye Not Found');
+        end
         
         pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh;
         se = strel('disk',closeDiameter); % morphologically close using circular structuring element
@@ -80,32 +97,39 @@ function pupProcessFrame(frame)
         state.pupil.pupil.area = stats.Area;
         state.pupil.pupil.box = stats.BoundingBox;
         state.pupil.pupil.centroid = stats.Centroid;
-        
+    catch
+        state.pupil.pupil.diameter = NaN;
+        state.pupil.pupil.mask = NaN;
+        state.pupil.pupil.frame = NaN;
+        state.pupil.pupil.area = NaN;
+        state.pupil.pupil.box = zeros(1,4);
+        state.pupil.pupil.centroid = NaN(1,2);
+        success=0;
+    end
+
 %         find circle
-        try
-            perim = bwperim(stats.Image); % perimeter of pupil object
-            [i j] = find(perim); % row and column indices
-            [c, r, residual] = fitcircle([i j]);
-
-
-            state.pupil.pupil.circCenter = c'; % transpose
-            state.pupil.pupil.circRadius = r;
-            state.pupil.pupil.circResidual = residual;
-            state.pupil.pupil.diameter = r * 2;
-        catch
-            state.pupil.pupil.circCenter = [NaN NaN]; % transpose
-            state.pupil.pupil.circRadius = NaN;
-            state.pupil.pupil.circResidual = NaN;
-            state.pupil.pupil.diameter = NaN;
+    try
+        if ~success
+            error('Error in pupProcesFrame: Pupil Not Found');
         end
+        perim = bwperim(stats.Image); % perimeter of pupil object
+        [i, j] = find(perim); % row and column indices
+        [c, r, residual] = fitcircle([i j]);
+
+
+        state.pupil.pupil.circCenter = c'; % transpose
+        state.pupil.pupil.circRadius = r;
+        state.pupil.pupil.circResidual = residual;
+        state.pupil.pupil.diameter = r * 2;
+    catch
+        disp('Error in pupProcessFrame: Circle Not Found');
+        state.pupil.pupil.circCenter = [NaN NaN]; % transpose
+        state.pupil.pupil.circRadius = NaN;
+        state.pupil.pupil.circResidual = NaN;
+        state.pupil.pupil.diameter = NaN;
+    end
 
         
 
-%     catch
-%         success = 0;
-%         disp('*** Warning: pupProcessFrame Failure ***');
-%         lasterr
-%     end
-    
-    % 
+
     
