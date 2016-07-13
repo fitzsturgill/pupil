@@ -1,5 +1,5 @@
 tic
-for counter = 1:state.pupil.nFrames
+for counter = 1:5:state.pupil.nFrames
     state.pupil.currentFrame = counter;
     updateGUIByGlobal('state.pupil.currentFrame');
     pupProcessFrame;

@@ -22,7 +22,7 @@ function varargout = pupil(varargin)
 
 % Edit the above text to modify the response to help pupil
 
-% Last Modified by GUIDE v2.5 14-Jun-2016 20:34:01
+% Last Modified by GUIDE v2.5 11-Jul-2016 23:37:21
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -230,6 +230,7 @@ function pushbutton1_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+    pupPlayVideo;
 
 
 % --- Executes on button press in pushbutton2.
@@ -468,7 +469,7 @@ function decreaseFrameButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     global state
-    state.pupil.currentFrame = max(state.pupil.currentFrame - 1, 0);
+    state.pupil.currentFrame = max(state.pupil.currentFrame - 1 * state.pupil.skipFrames, 0);
     updateGUIByGlobal('state.pupil.currentFrame');
     pupProcessFrame;
     pupUpdateFrameFigure;
@@ -480,7 +481,73 @@ function increaseFrameButton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     global state
-    state.pupil.currentFrame = min(state.pupil.currentFrame + 1, state.pupil.nFrames);
+    state.pupil.currentFrame = min(state.pupil.currentFrame + 1 * state.pupil.skipFrames, state.pupil.nFrames);
     updateGUIByGlobal('state.pupil.currentFrame');
     pupProcessFrame;
     pupUpdateFrameFigure;    
+
+
+
+function skipFrames_Callback(hObject, eventdata, handles)
+% hObject    handle to skipFrames (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of skipFrames as text
+%        str2double(get(hObject,'String')) returns contents of skipFrames as a double
+genericCallback(hObject);
+
+% --- Executes during object creation, after setting all properties.
+function skipFrames_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to skipFrames (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in ProcessDataButton.
+function ProcessDataButton_Callback(hObject, eventdata, handles)
+% hObject    handle to ProcessDataButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+    global state
+    pupProcessVideo;
+ 
+      
+
+
+% --- Executes on button press in saveDataButton.
+function saveDataButton_Callback(hObject, eventdata, handles)
+% hObject    handle to saveDataButton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA
+    pupSaveData;
+
+
+
+function blinkArea_Callback(hObject, eventdata, handles)
+% hObject    handle to blinkArea (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of blinkArea as text
+%        str2double(get(hObject,'String')) returns contents of blinkArea as a double
+    genericCallback(hobject);
+
+
+% --- Executes during object creation, after setting all properties.
+function blinkArea_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to blinkArea (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

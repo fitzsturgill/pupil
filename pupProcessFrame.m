@@ -26,29 +26,31 @@ function pupProcessFrame(frame)
         eyeMaskComps.NumObjects=1;
         eyeMaskComps.PixelIdxList=eyeMaskComps.PixelIdxList(idx);
         stats = regionprops(eyeMaskComps,...
-            'Area',...
-            'Centroid',...
+            'ConvexArea',...
+            'Centroid',...  % not of filled region
             'BoundingBox',...
-            'MinorAxisLength',...
+            'MinorAxisLength',...  
             'MajorAxisLength',...
-            'Image',...
-            'SubarrayIdx',...
-            'PixelIdxList'...            
+            'ConvexImage',...
+            'SubarrayIdx'...        
             );
 %         offsets = floor(stats.BoundingBox);
 %         eyeMaskComp = stats.ConvexImage;
 %         eyeMaskFrame = stats.ConvexImage .* rawFrame(stats.SubarrayIdx{:});
-        eyeMaskComp = stats.Image;
-        eyeMaskFrame = stats.Image .* rawFrame(stats.SubarrayIdx{:});
-        eyeMaskFrame(~stats.Image) = 255; % set exterior = 255 to make subsequent thresholding simpler
+        eyeMaskComp = stats.ConvexImage;
+        eyeMaskFrame = stats.ConvexImage .* rawFrame(stats.SubarrayIdx{:});
+        displayFrame = eyeMaskFrame;
+        eyeMaskFrame(~stats.ConvexImage) = 255; % set exterior = 255 to make subsequent thresholding simpler       
+        displayFrame(~stats.ConvexImage) = -1; % to show difference between mask and saturated pixels within eye (assuming that data will have few true 0 pixels)    
         state.pupil.eye.mask = eyeMaskComp;
-        state.pupil.eye.frame = eyeMaskFrame;
-        state.pupil.eye.area = stats.Area;
+        state.pupil.eye.frame = displayFrame;
+        state.pupil.eye.area = stats.ConvexArea;
         state.pupil.eye.box = stats.BoundingBox;
-        state.pupil.eye.avg = mean(rawFrame(stats.SubarrayIdx{:}));
+        state.pupil.eye.avg = mean(eyeMaskFrame(stats.ConvexImage));
         state.pupil.eye.minorAxisLength = stats.MinorAxisLength;
         state.pupil.eye.majorAxisLength = stats.MajorAxisLength;        
         state.pupil.eye.centroid = stats.Centroid;
+        state.pupil.eye.blinkDetected = stats.ConvexArea < state.pupil.blinkArea;
         
     catch
         success = 0;
@@ -59,7 +61,8 @@ function pupProcessFrame(frame)
         state.pupil.eye.avg = NaN;
         state.pupil.eye.minorAxisLength = NaN;
         state.pupil.eye.majorAxisLength = NaN;        
-        state.pupil.eye.centroid = NaN(1,2);     
+        state.pupil.eye.centroid = NaN(1,2);
+        state.pupil.eye.blinkDetected=NaN;
     end
 
         
@@ -67,9 +70,13 @@ function pupProcessFrame(frame)
   
     try
         % throw error if eye wasn't found
-        if ~success
-            error('Error in pupProcesFrame: Eye Not Found');
+%         if ~success
+%             error('Error in pupProcessFrame: Eye Not Found');
+%         end
+        if state.pupil.eye.blinkDetected % if blinking, don't calculate pupil stats
+            success=0;
         end
+        assert(success > 0);
         
         pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh;
         se = strel('disk',closeDiameter); % morphologically close using circular structuring element
@@ -81,20 +88,19 @@ function pupProcessFrame(frame)
         pupilMaskComps.NumObjects=1;
         pupilMaskComps.PixelIdxList=pupilMaskComps.PixelIdxList(idx);
         stats = regionprops(pupilMaskComps,...
-            'Area',...
+            'ConvexArea',...
             'BoundingBox',...
             'Centroid',...
-            'Image',...
-            'SubarrayIdx',...
-            'PixelIdxList',...
-            'EquivDiameter'...
+            'ConvexImage',...
+            'SubarrayIdx'...
             );
-        pupilMaskFrame = stats.Image .* eyeMaskFrame(stats.SubarrayIdx{:});
-        pupilMaskFrame(~stats.Image) = 255;
-        state.pupil.pupil.diameter=stats.EquivDiameter;
-        state.pupil.pupil.mask = stats.Image;
+        pupilMaskFrame = stats.ConvexImage .* eyeMaskFrame(stats.SubarrayIdx{:});
+        pupilMaskFrame(~stats.ConvexImage) = 255;
+%         pupilMaskFrame = stats.ConvexImage * 255;
+        state.pupil.pupil.diameter=2 * sqrt(stats.ConvexArea/pi);
+        state.pupil.pupil.mask = stats.ConvexImage;
         state.pupil.pupil.frame = pupilMaskFrame;
-        state.pupil.pupil.area = stats.Area;
+        state.pupil.pupil.area = stats.ConvexArea;
         state.pupil.pupil.box = stats.BoundingBox;
         state.pupil.pupil.centroid = stats.Centroid;
     catch
@@ -109,10 +115,11 @@ function pupProcessFrame(frame)
 
 %         find circle
     try
-        if ~success
-            error('Error in pupProcesFrame: Pupil Not Found');
-        end
-        perim = bwperim(stats.Image); % perimeter of pupil object
+%         if ~success
+%             error('Warning in pupProcesFrame: Pupil Not Found');
+%         end
+        assert(success > 0);
+        perim = bwperim(stats.ConvexImage); % perimeter of pupil object
         [i, j] = find(perim); % row and column indices
         [c, r, residual] = fitcircle([i j]);
 
@@ -122,7 +129,6 @@ function pupProcessFrame(frame)
         state.pupil.pupil.circResidual = residual;
         state.pupil.pupil.diameter = r * 2;
     catch
-        disp('Error in pupProcessFrame: Circle Not Found');
         state.pupil.pupil.circCenter = [NaN NaN]; % transpose
         state.pupil.pupil.circRadius = NaN;
         state.pupil.pupil.circResidual = NaN;
