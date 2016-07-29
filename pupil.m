@@ -537,7 +537,7 @@ function blinkArea_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of blinkArea as text
 %        str2double(get(hObject,'String')) returns contents of blinkArea as a double
-    genericCallback(hobject);
+    genericCallback(hObject);
 
 
 % --- Executes during object creation, after setting all properties.
