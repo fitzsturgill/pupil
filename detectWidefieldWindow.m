@@ -108,7 +108,8 @@ if makePlots
   %% Plot falloff
   
   figure;
-  barStacked(edges, means', {'k'});
+%   barStacked(edges, means', {'k'});
+    stem(edges(1:end-1), means);
   hold on;
   plot(radius * [1 1], [0 max(means)], 'r-');
   set(gca, 'TickDir', 'out', 'Box', 'off');
