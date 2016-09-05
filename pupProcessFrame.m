@@ -88,19 +88,19 @@ function pupProcessFrame(frame)
         pupilMaskComps.NumObjects=1;
         pupilMaskComps.PixelIdxList=pupilMaskComps.PixelIdxList(idx);
         stats = regionprops(pupilMaskComps,...
-            'ConvexArea',...
+            'Area',...
             'BoundingBox',...
             'Centroid',...
-            'ConvexImage',...
+            'Image',...
             'SubarrayIdx'...
             );
-        pupilMaskFrame = stats.ConvexImage .* eyeMaskFrame(stats.SubarrayIdx{:});
-        pupilMaskFrame(~stats.ConvexImage) = 255;
+        pupilMaskFrame = stats.Image .* eyeMaskFrame(stats.SubarrayIdx{:});
+        pupilMaskFrame(~stats.Image) = 255;
 %         pupilMaskFrame = stats.ConvexImage * 255;
-        state.pupil.pupil.diameter=2 * sqrt(stats.ConvexArea/pi);
-        state.pupil.pupil.mask = stats.ConvexImage;
+        state.pupil.pupil.diameter=2 * sqrt(stats.Area/pi);
+        state.pupil.pupil.mask = stats.Image;
         state.pupil.pupil.frame = pupilMaskFrame;
-        state.pupil.pupil.area = stats.ConvexArea;
+        state.pupil.pupil.area = stats.Area;
         state.pupil.pupil.box = stats.BoundingBox;
         state.pupil.pupil.centroid = stats.Centroid;
     catch
@@ -119,7 +119,7 @@ function pupProcessFrame(frame)
 %             error('Warning in pupProcesFrame: Pupil Not Found');
 %         end
         assert(success > 0);
-        perim = bwperim(stats.ConvexImage); % perimeter of pupil object
+        perim = bwperim(stats.Image); % perimeter of pupil object
         [i, j] = find(perim); % row and column indices
         [c, r, residual] = fitcircle([i j]);
 
