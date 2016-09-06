@@ -64,7 +64,7 @@ function pupProcessVideo(showProgress)
         end
 
         for field = state.pupil.pupilSaveFields
-            pupilData.pupil.(field{:})(counter,:) = state.pupil.pupil.(field{:});
+            pupilData.pupil.(field{:})(counter,:) = state.pupil.pupil.(field{:})(1);
         end
         if showProgress
             waitbar(counter/nFrames);
@@ -74,9 +74,11 @@ function pupProcessVideo(showProgress)
     success = 1;
     if showProgress
         ensureFigure('processedData', 1) 
-        subplot(2,2,1); plot(state.pupil.processedData.eye.area); title('eye area');
-        subplot(2,2,2); plot(state.pupil.processedData.pupil.area); title('pupil area');      
-        subplot(2,2,3); plot(state.pupil.processedData.pupil.diameter); title('pupil diameter');
-        subplot(2,2,4); plot(state.pupil.processedData.pupil.circResidual); title('residual');   
+        subplot(3,2,1); plot(state.pupil.processedData.eye.area); title('eye area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+        subplot(3,2,2); plot(state.pupil.processedData.pupil.area); title('pupil area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+        subplot(3,2,3); plot(state.pupil.processedData.pupil.diameter); title('pupil diameter'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+        subplot(3,2,4); plot(state.pupil.processedData.pupil.circResidual); title('residual'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+        subplot(3,2,5); scatter(state.pupil.processedData.pupil.circResidual, state.pupil.processedData.pupil.diameter);
+        xlabel('circ fit residual'); ylabel('pupil diameter');
         close(h);
     end
