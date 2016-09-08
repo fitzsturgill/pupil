@@ -2,7 +2,16 @@ function pupilSession = pupLoadSession2(filepath)
 
 %% assumes all trials are same length
 %     cd('E:\Data\ChAT_26\SO_RewardPunish_odor\Session Data\Pupil_160710');
-    cd(filepath);
+    if nargin < 1
+        cd(filepath);
+    else
+        [~, filepath] = uiputfile('path', 'Choose pupil session path...');
+        if filepath == 0
+            return
+        else
+            cd(filepath);
+        end
+    end
 
     frameRate = 120;
     dX = 1/frameRate;
