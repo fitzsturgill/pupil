@@ -2,7 +2,7 @@ function pupilSession = pupLoadSession2(filepath)
 
 %% assumes all trials are same length
 %     cd('E:\Data\ChAT_26\SO_RewardPunish_odor\Session Data\Pupil_160710');
-    if nargin < 1
+    if nargin == 1
         cd(filepath);
     else
         [~, filepath] = uiputfile('path', 'Choose pupil session path...');
