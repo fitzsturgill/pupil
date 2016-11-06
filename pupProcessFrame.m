@@ -9,6 +9,8 @@ function pupProcessFrame(frame)
     connectivity = 8;  % default connectivity for identifiying connected components
     closeDiameter = 6; % default 8
     filterSigma = 1;
+    
+    pupilMax = 100;
 
     rawFrame = state.pupil.vidData(:,:,frame);
     state.pupil.rawFrameData = rawFrame;
@@ -127,12 +129,17 @@ function pupProcessFrame(frame)
         perim = bwperim(stats.ConvexImage); % perimeter of pupil object
         [i, j] = find(perim); % row and column indices
         [c, r, residual] = fitcircle([i j]);
-
-
-        state.pupil.pupil.circCenter = c'; % transpose
-        state.pupil.pupil.circRadius = r;
-        state.pupil.pupil.circResidual = residual;
-        state.pupil.pupil.diameter = r * 2;
+        if (r * 2) > pupilMax
+            state.pupil.pupil.circCenter = [NaN NaN]; % transpose
+            state.pupil.pupil.circRadius = NaN;
+            state.pupil.pupil.circResidual = NaN;
+            state.pupil.pupil.diameter = NaN;
+        else        
+            state.pupil.pupil.circCenter = c'; % transpose
+            state.pupil.pupil.circRadius = r;
+            state.pupil.pupil.circResidual = residual;
+            state.pupil.pupil.diameter = r * 2;
+        end
     catch
         state.pupil.pupil.circCenter = [NaN NaN]; % transpose
         state.pupil.pupil.circRadius = NaN;

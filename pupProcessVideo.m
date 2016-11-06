@@ -21,7 +21,7 @@ function pupProcessVideo(showProgress)
         pupilData.(field{:}) = zeros(nFrames,1);
     end
     if showProgress
-        h = waitbar(0, 'Processing Video');
+        h = waitbar(0, 'Processing Video', 'Position', [15.7500   44.2500  270.0000   56.2500]);
     end
     for field = state.pupil.eyeSaveFields
         switch field{:}
