@@ -15,4 +15,3 @@ function pupProcessDirectory(start, showProgress)
         fileNumber = fileNumber + 1;
         drawnow;
     end
-        
