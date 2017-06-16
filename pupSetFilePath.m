@@ -7,4 +7,5 @@ function pupSetFilePath
 	else
 		state.pupil.filePath = pname;
         updateGUIByGlobal('state.pupil.filePath');
-	end
+    end
+    
