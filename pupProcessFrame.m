@@ -45,7 +45,7 @@ function pupProcessFrame(frame)
 %         eyeMaskComp = stats.ConvexImage;
 %         eyeMaskFrame = stats.ConvexImage .* rawFrame(stats.SubarrayIdx{:});
         eyeMaskComp = stats.ConvexImage;
-        eyeMaskFrame = stats.ConvexImage .* rawFrame(stats.SubarrayIdx{:});
+        eyeMaskFrame = stats.ConvexImage .* rawFrame(stats.SubarrayIdx{:}); % see documentation for regionprops
         displayFrame = eyeMaskFrame;
         eyeMaskFrame(~stats.ConvexImage) = 255; % set exterior = 255 to make subsequent thresholding simpler       
         displayFrame(~stats.ConvexImage) = -1; % to show difference between mask and saturated pixels within eye (assuming that data will have few true 0 pixels)    
@@ -53,6 +53,7 @@ function pupProcessFrame(frame)
         state.pupil.eye.frame = displayFrame;
         state.pupil.eye.area = stats.ConvexArea;
         state.pupil.eye.box = stats.BoundingBox;
+        state.pupil.eye.SubarrayIdx = stats.SubarrayIdx;
         state.pupil.eye.avg = mean(eyeMaskFrame(stats.ConvexImage));
         state.pupil.eye.minorAxisLength = stats.MinorAxisLength;
         state.pupil.eye.majorAxisLength = stats.MajorAxisLength;        
@@ -85,7 +86,14 @@ function pupProcessFrame(frame)
         end
         assert(success > 0);
         
-        pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh;
+        % restrict search for pupil in user defined region
+        regionMask = pupPupilRegion('getRegion');
+        if isempty(regionMask)
+            pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh;
+        else
+            pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh & regionMask;
+        end
+        
         se = strel('disk',closeDiameter); % morphologically close using circular structuring element
         pupilMaskRaw = imclose(pupilMaskRaw, se);
         pupilMaskComps = bwconncomp(pupilMaskRaw, connectivity);
@@ -109,6 +117,7 @@ function pupProcessFrame(frame)
         state.pupil.pupil.frame = pupilMaskFrame;
         state.pupil.pupil.area = stats.ConvexArea;
         state.pupil.pupil.box = stats.BoundingBox;
+        state.pupil.pupil.SubarrayIdx = stats.SubarrayIdx;        
         state.pupil.pupil.centroid = stats.Centroid;
     catch
         state.pupil.pupil.diameter = NaN;
