@@ -105,6 +105,9 @@ function filePath_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of filePath as text
 %        str2double(get(hObject,'String')) returns contents of filePath as a double
     genericCallback(hObject);
+    if pupLoadVideo
+        pupFlipFrame;
+    end
 
 
 % --- Executes during object creation, after setting all properties.
@@ -179,7 +182,7 @@ function fileNumber_Callback(hObject, eventdata, handles)
     genericCallback(hObject);
     state.pupil.currentFrame = 1;
     updateGUIByGlobal('state.pupil.currentFrame');
-    if pupLoadVideo;  
+    if pupLoadVideo
         pupFlipFrame;
     end
 
@@ -204,11 +207,11 @@ function slider1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'Value') returns position of slider
 %        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
-    val = get(hObject, 'Value')
+    val = get(hObject, 'Value');
     genericCallback(hObject);
     state.pupil.currentFrame = 1;
     updateGUIByGlobal('state.pupil.currentFrame');    
-    if pupLoadVideo;
+    if pupLoadVideo
         pupFlipFrame;
     end
 
@@ -239,6 +242,9 @@ function pushbutton2_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
     pupSetFilePath;
+    if pupLoadVideo
+        pupFlipFrame;
+    end    
 
 
 % --- Executes on button press in pushbutton3.
@@ -266,7 +272,7 @@ function pushbutton4_Callback(hObject, eventdata, handles)
     updateGUIByGlobal('state.pupil.fileNumber');
     state.pupil.currentFrame = 1;
     updateGUIByGlobal('state.pupil.currentFrame');    
-    if pupLoadVideo;
+    if pupLoadVideo
         pupFlipFrame;
     end
 
