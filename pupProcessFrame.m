@@ -13,12 +13,14 @@ function pupProcessFrame(frame)
     pupilMax = 100;
 
     rawFrame = state.pupil.vidData(:,:,frame);
-    state.pupil.rawFrameData = rawFrame;
+
     
     %% try filtering
     if filterSigma
         rawFrame = imgaussfilt(rawFrame, filterSigma);
     end
+    
+    state.pupil.rawFrameData = rawFrame;
     
         % apply eyelid threshold
     success = 1;

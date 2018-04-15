@@ -46,6 +46,11 @@ function pupProcessVideo(showProgress)
     
     %% process and store data
     for counter = 1:state.pupil.nFrames
+        
+        if state.pupil.stopPlayback
+            state.pupil.stopPlayback = 0;
+            return
+        end
         if showProgress
             if mod(counter, 50)
                 pupFlipFrame(counter, 0);

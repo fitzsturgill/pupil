@@ -1,5 +1,5 @@
 function pupUpdateFrameFigure
-    global state
+    global state testVar
     
     set(state.pupil.rawFrameImageHandle, 'CData', state.pupil.rawFrameData);
     set(state.pupil.eyeFrameImageHandle, 'CData', state.pupil.eye.frame);
@@ -30,5 +30,7 @@ function pupUpdateFrameFigure
     set(state.pupil.convFrameImageHandle, 'CData', state.pupil.convFrameData);
     set(state.pupil.convFrameAx, 'YLim', [0 size(state.pupil.convFrameData, 1)], 'XLim', [0 size(state.pupil.convFrameData, 2)]);
     
-    
+    ensureFigure('test_subtract', 1);
+    imagesc(state.pupil.rawFrameData - testVar.meanFrame);
+  
     drawnow;
