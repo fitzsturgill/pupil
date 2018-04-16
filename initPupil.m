@@ -44,6 +44,7 @@ function initPupil
     state.pupil.rawFrameAx = subplot(2,2,1); 
     state.pupil.rawFrameImageHandle = imshow(rand(100)*255, [0 255], 'Parent', state.pupil.rawFrameAx);
     state.pupil.eyeBoxHandle = rectangle('Position', [0 0 0 0], 'EdgeColor', 'm');
+    state.pupil.pupilRegionHandle = line([0 0], [0 0], 'Parent', state.pupil.rawFrameAx, 'Color', 'g');
     set(gca, 'NextPlot', 'add'); %  set intended for update speed    
     % eye frame
     state.pupil.eyeFrameAx = subplot(2,2,2); 

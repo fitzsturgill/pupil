@@ -90,11 +90,12 @@ function pupProcessFrame(frame)
         
         % restrict search for pupil in user defined region
         regionMask = pupPupilRegion('getRegion');
-        if isempty(regionMask)
-            pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh;
-        else
-            pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh & regionMask;
-        end
+        pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh & regionMask;
+%         if isempty(regionMask)
+%             pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh;
+%         else
+%             pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh & regionMask;
+%         ends
         
         se = strel('disk',closeDiameter); % morphologically close using circular structuring element
         pupilMaskRaw = imclose(pupilMaskRaw, se);

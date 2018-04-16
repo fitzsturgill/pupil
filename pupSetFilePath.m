@@ -9,3 +9,5 @@ function pupSetFilePath
         updateGUIByGlobal('state.pupil.filePath');
     end
     
+    warning('need to delete pupil region and auto region masks');
+    
