@@ -1,6 +1,6 @@
 function initPupil
     
-
+    evalin('base', 'global state gh');
     global state gh
 
     gh.pupil = guihandles(pupil);
