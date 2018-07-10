@@ -35,7 +35,8 @@ function initPupil
         'diameter',...
         'centroid',...
         'circCenter',...
-        'circResidual'...
+        'circResidual',...
+        'diameter2',...
         };
     
     % set up figures
@@ -55,12 +56,13 @@ function initPupil
     state.pupil.pupFrameAx = subplot(2,2,3); 
     state.pupil.pupFrameImageHandle = imshow(rand(100)*255, [0 255], 'Parent', state.pupil.pupFrameAx);
     state.pupil.pupCircleHandle = line([0 0], [0 0], 'Parent', state.pupil.pupFrameAx, 'Color', 'y');
+    state.pupil.pupCircleHandle2 = line([0 0], [0 0], 'Parent', state.pupil.pupFrameAx, 'Color', 'r');
     set(gca, 'NextPlot', 'add'); %  set intended for update speed    
     % convolved frame
-    state.pupil.convFrameAx = subplot(2,2,4);
-    state.pupil.convFrameImageHandle = imshow(rand(100)*255, [0 255], 'Parent', state.pupil.convFrameAx);
-    set(state.pupil.frameFigure, 'ColorMap', makeColorMap('graySat',9));
-    set(gca, 'NextPlot', 'add'); %  set intended for update speed 
+%     state.pupil.convFrameAx = subplot(2,2,4);
+%     state.pupil.convFrameImageHandle = imshow(rand(100)*255, [0 255], 'Parent', state.pupil.convFrameAx);
+%     set(state.pupil.frameFigure, 'ColorMap', makeColorMap('graySat',9));
+%     set(gca, 'NextPlot', 'add'); %  set intended for update speed 
 end
 
 function map = makeColorMap(color, bits)

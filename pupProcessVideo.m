@@ -81,9 +81,12 @@ function pupProcessVideo(showProgress)
         ensureFigure('processedData', 1) 
         subplot(3,2,1); plot(state.pupil.processedData.eye.area); title('eye area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
         subplot(3,2,2); plot(state.pupil.processedData.pupil.area); title('pupil area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
-        subplot(3,2,3); plot(state.pupil.processedData.pupil.diameter); title('pupil diameter'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+        subplot(3,2,3); plot(state.pupil.processedData.pupil.diameter); hold on; plot(state.pupil.processedData.pupil.diameter2, 'r'); 
+        title('pupil diameter'); set(gca, 'XLim', [1 state.pupil.nFrames]);
         subplot(3,2,4); plot(state.pupil.processedData.pupil.circResidual); title('residual'); set(gca, 'XLim', [1 state.pupil.nFrames]);
         subplot(3,2,5); scatter(state.pupil.processedData.pupil.circResidual, state.pupil.processedData.pupil.diameter);
         xlabel('circ fit residual'); ylabel('pupil diameter');
+        subplot(3,2,6);
+        scatter(state.pupil.processedData.pupil.diameter, state.pupil.processedData.pupil.diameter2);
         close(h);
     end

@@ -8,7 +8,7 @@ function pupProcessFrame(frame)
     success = 0;
     connectivity = 8;  % default connectivity for identifiying connected components
     closeDiameter = 6; % default 8
-    filterSigma = 2;
+    filterSigma = 1;
     
     pupilMax = 100;
 
@@ -110,7 +110,8 @@ function pupProcessFrame(frame)
             'BoundingBox',...
             'Centroid',...
             'ConvexImage',...
-            'SubarrayIdx'...
+            'SubarrayIdx',...
+            'PixelList'...
             );
         pupilMaskFrame = stats.ConvexImage .* eyeMaskFrame(stats.SubarrayIdx{:});
         pupilMaskFrame(~stats.ConvexImage) = 255;
@@ -141,6 +142,9 @@ function pupProcessFrame(frame)
         perim = bwperim(stats.ConvexImage); % perimeter of pupil object
         [i, j] = find(perim); % row and column indices
         [c, r, residual] = fitcircle([i j]);
+        % testing- try min enclosing circle
+        [r2, c2] = ApproxMinBoundSphereND(stats.PixelList);
+        c2 = c2 - stats.BoundingBox(1:2);
         if (r * 2) > pupilMax
             state.pupil.pupil.circCenter = [NaN NaN]; % transpose
             state.pupil.pupil.circRadius = NaN;
@@ -151,7 +155,12 @@ function pupProcessFrame(frame)
             state.pupil.pupil.circRadius = r;
             state.pupil.pupil.circResidual = residual;
             state.pupil.pupil.diameter = r * 2;
+            state.pupil.pupil.circCenter2 = c2'; % transpose
+            state.pupil.pupil.circRadius2 = r2;
+            state.pupil.pupil.diameter2 = r2 * 2;            
         end
+        
+
     catch
         state.pupil.pupil.circCenter = [NaN NaN]; % transpose
         state.pupil.pupil.circRadius = NaN;
