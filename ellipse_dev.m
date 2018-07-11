@@ -9,5 +9,5 @@ eyePoints = eyeDomain(:, theEye);
 % [x, y] = ind2sub([stats.BoundingBox(4) stats.BoundingBox(3)], theEye);
 % eyePoints = [x y]';
 [A, c] = MinVolEllipse(eyePoints, 1);
-mysolution = (eyePoints - c) * A * (eyePoints - c)';
+mysolution = (eyePoints - c)' * A * (eyePoints - c);
 
