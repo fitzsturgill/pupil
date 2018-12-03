@@ -24,6 +24,7 @@ function pupProcessFrame(frame)
     
         % apply eyelid threshold
     success = 1;
+    state.pupil.frameAvg = mean2(rawFrame);
     try
         eyeMaskRaw = rawFrame < state.pupil.lidThresh;
         se = strel('disk',closeDiameter); % morphologically close
