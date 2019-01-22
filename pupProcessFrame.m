@@ -8,7 +8,7 @@ function pupProcessFrame(frame)
     success = 0;
     connectivity = 8;  % default connectivity for identifiying connected components
     closeDiameter = 6; % default 8
-    filterSigma = 1;
+    filterSigma = 0;
     
     pupilMax = 100;
 
