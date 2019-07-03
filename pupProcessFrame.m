@@ -8,7 +8,7 @@ function pupProcessFrame(frame)
     success = 0;
     connectivity = 8;  % default connectivity for identifiying connected components
     closeDiameter = 6; % default 8
-    filterSigma = 0;
+    filterSigma = 1;
     
     pupilMax = 100;
 
@@ -97,7 +97,8 @@ function pupProcessFrame(frame)
 %         else
 %             pupilMaskRaw = eyeMaskFrame < state.pupil.pupThresh & regionMask;
 %         ends
-        
+
+        closeDiameter = 20;
         se = strel('disk',closeDiameter); % morphologically close using circular structuring element
         pupilMaskRaw = imclose(pupilMaskRaw, se);
         pupilMaskComps = bwconncomp(pupilMaskRaw, connectivity);

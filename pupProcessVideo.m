@@ -77,15 +77,16 @@ function pupProcessVideo(showProgress)
     end    
     state.pupil.processedData = pupilData;
     success = 1;
+    % always update graph, not very time-consuming
+    ensureFigure('processedData', 1) 
+    subplot(3,2,1); hold on; plot(state.pupil.processedData.currentFrame, state.pupil.processedData.eye.area); title('eye area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+    yyaxis right; plot(state.pupil.processedData.currentFrame, state.pupil.processedData.frameAvg, 'r')
+    subplot(3,2,2); plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.area); title('pupil area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+    subplot(3,2,3); plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.diameter);% hold on; plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.diameter2, 'r'); 
+    title('pupil diameter'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+    subplot(3,2,4); plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.circResidual); title('residual'); set(gca, 'XLim', [1 state.pupil.nFrames]);
+    subplot(3,2,5); scatter(state.pupil.processedData.pupil.circResidual, state.pupil.processedData.pupil.diameter);
+    xlabel('circ fit residual'); ylabel('pupil diameter');
     if showProgress
-        ensureFigure('processedData', 1) 
-        subplot(3,2,1); hold on; plot(state.pupil.processedData.currentFrame, state.pupil.processedData.eye.area); title('eye area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
-        yyaxis right; plot(state.pupil.processedData.currentFrame, state.pupil.processedData.frameAvg, 'r')
-        subplot(3,2,2); plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.area); title('pupil area'); set(gca, 'XLim', [1 state.pupil.nFrames]);
-        subplot(3,2,3); plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.diameter); hold on; plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.diameter2, 'r'); 
-        title('pupil diameter'); set(gca, 'XLim', [1 state.pupil.nFrames]);
-        subplot(3,2,4); plot(state.pupil.processedData.currentFrame, state.pupil.processedData.pupil.circResidual); title('residual'); set(gca, 'XLim', [1 state.pupil.nFrames]);
-        subplot(3,2,5); scatter(state.pupil.processedData.pupil.circResidual, state.pupil.processedData.pupil.diameter);
-        xlabel('circ fit residual'); ylabel('pupil diameter');
         close(h);
     end
